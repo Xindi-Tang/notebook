@@ -16,4 +16,8 @@ public class CategoryService {
     public List<Category> getAll(){
         return categaryDao.findAll(Sort.by(Sort.Direction.DESC,"id"));
     }
+
+    public void deleteById(int id){
+        categaryDao.deleteById(id);
+    }
 }

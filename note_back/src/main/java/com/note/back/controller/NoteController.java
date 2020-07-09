@@ -1,16 +1,15 @@
 package com.note.back.controller;
 
+import com.note.back.Response.Response;
 import com.note.back.pojo.Category;
 import com.note.back.pojo.Note;
 import com.note.back.service.CategoryService;
 import com.note.back.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Controller
@@ -32,5 +31,33 @@ public class NoteController {
     @ResponseBody
     public List<Note> getNoteByCategory(@PathVariable("id") int id){
         return noteService.getNotesByCategory(id);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/update/note/{id}/info")
+    @ResponseBody
+    public Response updateNoteInfo(@RequestBody Note requestNote, @PathVariable("id") int id){
+        Note note = noteService.getById(id);
+        note.setName(requestNote.getName());
+        note.setAbs(requestNote.getAbs());
+        note.setLastModifiedTime(new Timestamp(System.currentTimeMillis()));
+        noteService.updateNote(note);
+        return new Response(200,"成功",null);
+    }
+
+    @CrossOrigin
+    @GetMapping("/api/note/delete/{id}")
+    @ResponseBody
+    public Response deleteNote(@PathVariable("id") int id){
+        noteService.deleteById(id);
+        return new Response(200,"成功",null);
+    }
+
+    @CrossOrigin
+    @GetMapping("/api/category/delete/{id}")
+    @ResponseBody
+    public Response deleteCategory(@PathVariable("id") int id){
+        categoryService.deleteById(id);
+        return new Response(200,"成功",null);
     }
 }
