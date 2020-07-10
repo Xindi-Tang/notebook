@@ -1,7 +1,7 @@
 <template>
   <div>
     <category-bar @categorySelect="getNotes" @categoryDefault="getNotes" ref="categoryBar"></category-bar>
-    <notes ref="notes" @editInfo="editNotes" @updateInfo="getNotes"></notes>
+    <notes ref="notes" @editInfo="handleEditNote" @updateInfo="getNotes" @addNote="handleAddNote"></notes>
     <note-edit-form ref="noteEditForm" @updateInfo="getNotes"></note-edit-form>
   </div>
 </template>
@@ -37,9 +37,17 @@
               }
             })
         },
-        editNotes(noteContent){
+        handleEditNote(noteContent){
           this.$refs.noteEditForm.dialogFormVisible=true;
+          this.$refs.noteEditForm.isCreate = false;
           this.$refs.noteEditForm.form=noteContent;
+        },
+        handleAddNote(){
+          var currentCid = this.$refs.categoryBar.currentCid;
+          this.$refs.noteEditForm.dialogFormVisible = true;
+          this.$refs.noteEditForm.isCreate = true;
+          this.$refs.noteEditForm.form = {};
+          this.$refs.noteEditForm.cid = currentCid
         }
       }
     }

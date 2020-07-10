@@ -11,13 +11,17 @@ import java.util.List;
 @Service
 public class CategoryService {
     @Autowired
-    CategoryDao categaryDao;
+    CategoryDao categoryDao;
 
     public List<Category> getAll(){
-        return categaryDao.findAll(Sort.by(Sort.Direction.DESC,"id"));
+        return categoryDao.findAll(Sort.by(Sort.Direction.DESC,"id"));
     }
 
     public void deleteById(int id){
-        categaryDao.deleteById(id);
+        categoryDao.deleteById(id);
+    }
+
+    public Category getById(int id){
+        return categoryDao.findById(id).get();
     }
 }

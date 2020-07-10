@@ -3,8 +3,11 @@ package com.note.back.controller;
 import com.note.back.Response.Response;
 import com.note.back.pojo.Category;
 import com.note.back.pojo.Note;
+import com.note.back.pojo.User;
 import com.note.back.service.CategoryService;
 import com.note.back.service.NoteService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +61,22 @@ public class NoteController {
     @ResponseBody
     public Response deleteCategory(@PathVariable("id") int id){
         categoryService.deleteById(id);
+        return new Response(200,"成功",null);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/update/category/{id}/note/add")
+    @ResponseBody
+    public Response addNote(@RequestBody Note requestNote,@PathVariable("id") int id){
+        Note note = new Note();
+        note.setName(requestNote.getName());
+        note.setAbs(requestNote.getAbs());
+        Category category = categoryService.getById(id);
+        note.setCategory(category);
+        note.setCreatedTime(new Timestamp(System.currentTimeMillis()));
+        note.setLastModifiedTime(new Timestamp(System.currentTimeMillis()));
+        note.setAuthor(noteService.getById(1).getAuthor());
+        noteService.updateNote(note);
         return new Response(200,"成功",null);
     }
 }
