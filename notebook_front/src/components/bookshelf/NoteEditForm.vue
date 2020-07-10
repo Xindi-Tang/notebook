@@ -10,7 +10,7 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="deleteNote">取 消</el-button>
+          <el-button @click="">取 消</el-button>
           <el-button type="primary" @click="updateNote">确 定</el-button>
         </div>
       </el-dialog>
@@ -22,13 +22,15 @@
       name: "NoteEditForm",
       data(){
         return {
+          isCreate: false,
           dialogFormVisible: false,
           formLabelWidth: '120px',
           form:{
             id:'',
             name:'',
             abs:'',
-          }
+          },
+          cid : '',
         }
       },
       methods:{
@@ -42,27 +44,34 @@
         },
         updateNote(){
           var _this = this;
-          var url='/update/note/'+this.form.id.toString()+'/info';
+          var url;
+          if(!_this.isCreate){
+            url='/update/note/'+this.form.id.toString()+'/info';
+          }
+          else{
+            url = '/update/category/'+this.cid.toString()+'/note/add';
+          }
+          console.log(url)
           this.axios.post(url,this.form)
-          .then(function (response) {
-            console.log(response)
-            if(response.data.status === 200){
-              _this.dialogFormVisible = false;
-              _this.$message({
-                message: '更新成功',
-                type: 'success'
-              });
-              _this.$emit('updateInfo')
-            }
-            else {
-              this.$message.error('更新失败');
-            }
-          })
-          .catch(function (error) {
-            this.$message.error(error);
-          })
+            .then(function (response) {
+              console.log(response)
+              if(response.data.status === 200){
+                _this.dialogFormVisible = false;
+                _this.$message({
+                  message: '更新成功',
+                  type: 'success'
+                });
+                _this.$emit('updateInfo')
+              }
+              else {
+                _this.$message.error('更新失败');
+              }
+            })
+            .catch(function (error) {
+              _this.$message.error(error);
+            })
         },
-        deleteNote(){
+        addNote(){
 
         }
       },

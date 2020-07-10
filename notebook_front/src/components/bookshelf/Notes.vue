@@ -3,26 +3,38 @@
     <el-row :gutter="10">
       <el-col :xl="6" :lg="6" :sm="24" v-for="(item,i) in notes" :key="i">
         <el-card shadow="hover" class="box-card">
-      <div slot="header" class="clearfix">
-        <span class="note-title">{{item.name}}</span>
-        <el-tooltip class="button-tip" transition="0s" effect="dark" content="删除此笔记" placement="top-start">
-          <el-button class="note-operation" type="text" icon="el-icon-delete" @click="deleteNote(item.id)"></el-button>
-        </el-tooltip>
-        <el-tooltip class="button-tip" transition="0s" effect="dark" content="编辑笔记内容" placement="top-start">
-          <el-button class="note-operation" type="text" icon="el-icon-edit"></el-button>
-        </el-tooltip>
-        <el-tooltip class="button-tip" transition="0s" effect="dark" content="查看笔记内容" placement="top-start">
-          <el-button class="note-operation" type="text" icon="el-icon-more"></el-button>
-        </el-tooltip>
-        <el-tooltip class="button-tip" transition="0s" effect="dark" content="编辑笔记标题与简介" placement="top-start">
-          <el-button class="note-operation" type="text" icon="el-icon-edit-outline" @click="editInfo(item)"></el-button>
-        </el-tooltip>
-      </div>
-      <div class="text item note-abs">
-        {{restrict(item.abs)}}
-      </div>
-    </el-card>
+          <div slot="header" class="clearfix">
+            <span class="note-title">{{item.name}}</span>
+            <el-tooltip class="button-tip" transition="0s" effect="dark" content="删除此笔记" placement="top-start">
+              <el-button class="note-operation" type="text" icon="el-icon-delete" @click="deleteNote(item.id)"></el-button>
+            </el-tooltip>
+            <el-tooltip class="button-tip" transition="0s" effect="dark" content="编辑笔记内容" placement="top-start">
+              <el-button class="note-operation" type="text" icon="el-icon-edit"></el-button>
+            </el-tooltip>
+            <el-tooltip class="button-tip" transition="0s" effect="dark" content="查看笔记内容" placement="top-start">
+              <el-button class="note-operation" type="text" icon="el-icon-more"></el-button>
+            </el-tooltip>
+            <el-tooltip class="button-tip" transition="0s" effect="dark" content="编辑笔记标题与简介" placement="top-start">
+              <el-button class="note-operation" type="text" icon="el-icon-edit-outline" @click="editInfo(item)"></el-button>
+            </el-tooltip>
+          </div>
+          <div class="text item note-abs">
+            {{restrict(item.abs)}}
+          </div>
+        </el-card>
       </el-col>
+    </el-row>
+    <el-row style="position: fixed;bottom: 10px;right: 10px">
+      <el-button type="success" circle @click="">
+        <i class="el-icon-edit"></i>
+      </el-button>
+    </el-row>
+    <el-row style="position: fixed;bottom: 70px;right: 10px">
+      <el-tooltip class="button-tip" transition="0s" effect="dark" content="新增笔记" placement="top-start">
+        <el-button type="primary" circle @click="addNote">
+          <i class="el-icon-document-add"></i>
+        </el-button>
+      </el-tooltip>
     </el-row>
   </div>
 
@@ -80,6 +92,9 @@
                 message: '已取消删除'
               });
             });
+          },
+          addNote(){
+            this.$emit('addNote')
           }
         }
     }
