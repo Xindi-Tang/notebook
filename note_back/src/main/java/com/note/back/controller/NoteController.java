@@ -40,7 +40,7 @@ public class NoteController {
     @PostMapping("/api/update/note/{id}/info")
     @ResponseBody
     public Response updateNoteInfo(@RequestBody Note requestNote, @PathVariable("id") int id){
-        Note note = noteService.getById(id);
+        Note note = noteService.getById(requestNote.getId());
         note.setName(requestNote.getName());
         note.setAbs(requestNote.getAbs());
         note.setLastModifiedTime(new Timestamp(System.currentTimeMillis()));
@@ -61,6 +61,26 @@ public class NoteController {
     @ResponseBody
     public Response deleteCategory(@PathVariable("id") int id){
         categoryService.deleteById(id);
+        return new Response(200,"成功",null);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/category/add")
+    @ResponseBody
+    public Response addCategory(@RequestBody Category requestCategory){
+        Category category = new Category();
+        category.setName(requestCategory.getName());
+        categoryService.updateCategory(category);
+        return new Response(200,"成功",null);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/category/update")
+    @ResponseBody
+    public Response updateCategoryInfo(@RequestBody Category requestCategory){
+        Category category = categoryService.getById(requestCategory.getId());
+        category.setName(requestCategory.getName());
+        categoryService.updateCategory(category);
         return new Response(200,"成功",null);
     }
 
