@@ -1,9 +1,9 @@
 <template>
   <div>
-    <el-tabs type="card" v-model="currentCid" @tab-click="handleClick" class="categories-tabs" editable @edit="editCategory">
+    <el-tabs type="card" v-model="currentCid" @tab-click="handleClick" class="categories-tabs" editable @edit="operateCategory">
       <el-tab-pane v-for="(item,i) in categories" :label="item.name" :key="i" :name="item.id.toString()"></el-tab-pane>
     </el-tabs>
-    <category-edit-form ref="editForm" @update="update"></category-edit-form>
+    <category-edit-form ref="editForm" @updateCategoryBar="update"></category-edit-form>
   </div>
 </template>
 
@@ -44,17 +44,27 @@
           this.axios.get("/categories")
             .then(function (response){
               if(response.status===200){
-                _this.categories=response.data
-                _this.currentCid = _this.categories[0].id.toString();
-                _this.$emit('categoryDefault')
-                console.log(response)
+                _this.categories=response.data;
+                if (_this.categories.length>0){
+                  _this.currentCid = _this.categories[0].id.toString();
+                  _this.$emit('categorySelect')
+                }
               }
             })
         },
         handleClick(tab, event) {
           this.$emit('categorySelect')
         },
-        editCategory(targetName,action) {
+        editCategory() {
+          for(var i=0;i<this.categories.length;i++){
+            if(this.categories[i].id.toString() === this.currentCid){
+              this.$refs.editForm.form = this.categories[i]
+            }
+          };
+          this.$refs.editForm.isCreate = false;
+          this.$refs.editForm.dialogFormVisible = true;
+        },
+        operateCategory(targetName,action) {
           if (action === 'remove') {
             var _this = this
             this.$confirm('是否永久删除该笔记分类?', '提示', {
@@ -69,21 +79,21 @@
                       type: 'warning',
                       message: '删除成功!'
                     });
-                    _this.update();
-                    // let tabs = _this.categories;
-                    // let activeName = _this.currentCid;
-                    // if (activeName === targetName) {
-                    //   tabs.forEach((tab, index) => {
-                    //     if (tab.id.toString() === targetName) {
-                    //       let nextTab = tabs[index + 1] || tabs[index - 1];
-                    //       if (nextTab) {
-                    //         activeName = nextTab.id.toString();
-                    //       }
-                    //     }
-                    //   });
-                    // }
-                    // _this.currentCid = activeName;
-                    // _this.categories = tabs.filter(tab => tab.id.toString() !== targetName);
+                    // _this.update();
+                    let tabs = _this.categories;
+                    let activeName = _this.currentCid;
+                    if (activeName === targetName) {
+                      tabs.forEach((tab, index) => {
+                        if (tab.id.toString() === targetName) {
+                          let nextTab = tabs[index + 1] || tabs[index - 1];
+                          if (nextTab) {
+                            activeName = nextTab.id.toString();
+                          }
+                        }
+                      });
+                    }
+                    _this.currentCid = activeName;
+                    _this.categories = tabs.filter(tab => tab.id.toString() !== targetName);
                   }
                 })
                 .catch(function (error) {
@@ -97,8 +107,9 @@
             });
           }
           if(action === 'add'){
-            this.$refs.editForm.dialogFormVisible = true
-            this.$refs.editForm.isCreate = true
+            this.$refs.editForm.dialogFormVisible = true;
+            this.$refs.editForm.isCreate = true;
+            this.$refs.editForm.categoryDialogTitle='新增笔记分类';
           }
         },
       }

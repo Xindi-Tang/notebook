@@ -1,6 +1,6 @@
 <template>
     <div>
-      <el-dialog title="编辑笔记本标题简介" :visible.sync="dialogFormVisible" :before-close="handleClose">
+      <el-dialog :title="noteDialogTitle" :visible.sync="dialogFormVisible" :before-close="handleClose">
         <el-form :model="form">
           <el-form-item label="笔记名称" :label-width="formLabelWidth">
             <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -10,7 +10,7 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="">取 消</el-button>
+          <el-button @click="dialogFormVisible=false">取 消</el-button>
           <el-button type="primary" @click="updateNote">确 定</el-button>
         </div>
       </el-dialog>
@@ -22,6 +22,7 @@
       name: "NoteEditForm",
       data(){
         return {
+          noteDialogTitle: '',
           isCreate: false,
           dialogFormVisible: false,
           formLabelWidth: '120px',
@@ -71,9 +72,6 @@
               _this.$message.error(error);
             })
         },
-        addNote(){
-
-        }
       },
     }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <category-bar @categorySelect="getNotes" @categoryDefault="getNotes" ref="categoryBar"></category-bar>
-    <notes ref="notes" @editInfo="handleEditNote" @updateInfo="getNotes" @addNote="handleAddNote"></notes>
+    <notes ref="notes" @editInfo="handleEditNote" @updateInfo="getNotes" @addNote="handleAddNote" @editCategory="handleEditCategory"></notes>
     <note-edit-form ref="noteEditForm" @updateInfo="getNotes"></note-edit-form>
   </div>
 </template>
@@ -41,14 +41,21 @@
           this.$refs.noteEditForm.dialogFormVisible=true;
           this.$refs.noteEditForm.isCreate = false;
           this.$refs.noteEditForm.form=noteContent;
+          this.$refs.noteEditForm.noteDialogTitle='编辑笔记标题与简介';
         },
         handleAddNote(){
           var currentCid = this.$refs.categoryBar.currentCid;
           this.$refs.noteEditForm.dialogFormVisible = true;
           this.$refs.noteEditForm.isCreate = true;
           this.$refs.noteEditForm.form = {};
-          this.$refs.noteEditForm.cid = currentCid
-        }
+          this.$refs.noteEditForm.cid = currentCid;
+          this.$refs.noteEditForm.noteDialogTitle='新增笔记(标题与简介)';
+        },
+        handleEditCategory(){
+          this.$refs.categoryBar.editCategory();
+          console.log("inBookShelf")
+        },
+
       }
     }
 </script>

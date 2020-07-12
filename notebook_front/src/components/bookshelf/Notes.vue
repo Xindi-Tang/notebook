@@ -25,9 +25,11 @@
       </el-col>
     </el-row>
     <el-row style="position: fixed;bottom: 10px;right: 10px">
-      <el-button type="success" circle @click="">
+      <el-tooltip class="button-tip" transition="0s" effect="dark" content="编辑笔记分类" placement="top-start">
+        <el-button type="success" circle @click="editCategory">
         <i class="el-icon-edit"></i>
       </el-button>
+      </el-tooltip>
     </el-row>
     <el-row style="position: fixed;bottom: 70px;right: 10px">
       <el-tooltip class="button-tip" transition="0s" effect="dark" content="新增笔记" placement="top-start">
@@ -95,7 +97,11 @@
           },
           addNote(){
             this.$emit('addNote')
-          }
+          },
+          editCategory(){
+            this.$emit('editCategory')
+          },
+
         }
     }
 </script>
