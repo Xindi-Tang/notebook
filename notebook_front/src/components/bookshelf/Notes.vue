@@ -8,11 +8,13 @@
             <el-tooltip class="button-tip" transition="0s" effect="dark" content="删除此笔记" placement="top-start">
               <el-button class="note-operation" type="text" icon="el-icon-delete" @click="deleteNote(item.id)"></el-button>
             </el-tooltip>
-            <el-tooltip class="button-tip" transition="0s" effect="dark" content="编辑笔记内容" placement="top-start">
-              <el-button class="note-operation" type="text" icon="el-icon-edit"></el-button>
-            </el-tooltip>
+            <router-link :to="{path:'/note/edit',query:{noteId:item.id}}">
+              <el-tooltip class="button-tip" transition="0s" effect="dark" content="编辑笔记内容" placement="top-start">
+                <el-button class="note-operation" type="text" icon="el-icon-edit"></el-button>
+              </el-tooltip>
+            </router-link>
             <el-tooltip class="button-tip" transition="0s" effect="dark" content="查看笔记内容" placement="top-start">
-              <el-button class="note-operation" type="text" icon="el-icon-more"></el-button>
+              <el-button class="note-operation" type="text" icon="el-icon-more" @click="readNote(item.id)"></el-button>
             </el-tooltip>
             <el-tooltip class="button-tip" transition="0s" effect="dark" content="编辑笔记标题与简介" placement="top-start">
               <el-button class="note-operation" type="text" icon="el-icon-edit-outline" @click="editInfo(item)"></el-button>
@@ -43,6 +45,8 @@
 </template>
 
 <script>
+    import NoteEdit from "../note/NoteEdit";
+
     export default {
       name: "Notes",
       data(){
@@ -100,6 +104,15 @@
           },
           editCategory(){
             this.$emit('editCategory')
+          },
+          readNote(id){
+            this.$router.push({
+              path:'/note/edit',
+              // name:'NoteEdit',
+              query:{
+                noteId:id
+              }
+            })
           },
 
         }
