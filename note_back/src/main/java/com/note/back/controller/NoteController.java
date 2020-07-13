@@ -30,29 +30,12 @@ public class NoteController {
     }
 
     @CrossOrigin
-    @GetMapping("/api/categories/{id}/notes")
+    @PostMapping("/api/category/update")
     @ResponseBody
-    public List<Note> getNoteByCategory(@PathVariable("id") int id){
-        return noteService.getNotesByCategory(id);
-    }
-
-    @CrossOrigin
-    @PostMapping("/api/update/note/{id}/info")
-    @ResponseBody
-    public Response updateNoteInfo(@RequestBody Note requestNote, @PathVariable("id") int id){
-        Note note = noteService.getById(requestNote.getId());
-        note.setName(requestNote.getName());
-        note.setAbs(requestNote.getAbs());
-        note.setLastModifiedTime(new Timestamp(System.currentTimeMillis()));
-        noteService.updateNote(note);
-        return new Response(200,"成功",null);
-    }
-
-    @CrossOrigin
-    @GetMapping("/api/note/delete/{id}")
-    @ResponseBody
-    public Response deleteNote(@PathVariable("id") int id){
-        noteService.deleteById(id);
+    public Response updateCategoryInfo(@RequestBody Category requestCategory){
+        Category category = categoryService.getById(requestCategory.getId());
+        category.setName(requestCategory.getName());
+        categoryService.updateCategory(category);
         return new Response(200,"成功",null);
     }
 
@@ -74,13 +57,23 @@ public class NoteController {
         return new Response(200,"成功",null);
     }
 
+
     @CrossOrigin
-    @PostMapping("/api/category/update")
+    @GetMapping("/api/categories/{id}/notes")
     @ResponseBody
-    public Response updateCategoryInfo(@RequestBody Category requestCategory){
-        Category category = categoryService.getById(requestCategory.getId());
-        category.setName(requestCategory.getName());
-        categoryService.updateCategory(category);
+    public List<Note> getNoteByCategory(@PathVariable("id") int id){
+        return noteService.getNotesByCategory(id);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/update/note/{id}/info")
+    @ResponseBody
+    public Response updateNoteInfo(@RequestBody Note requestNote, @PathVariable("id") int id){
+        Note note = noteService.getById(requestNote.getId());
+        note.setName(requestNote.getName());
+        note.setAbs(requestNote.getAbs());
+        note.setLastModifiedTime(new Timestamp(System.currentTimeMillis()));
+        noteService.updateNote(note);
         return new Response(200,"成功",null);
     }
 
@@ -98,5 +91,21 @@ public class NoteController {
         note.setAuthor(noteService.getById(1).getAuthor());
         noteService.updateNote(note);
         return new Response(200,"成功",null);
+    }
+
+    @CrossOrigin
+    @GetMapping("/api/note/delete/{id}")
+    @ResponseBody
+    public Response deleteNote(@PathVariable("id") int id){
+        noteService.deleteById(id);
+        return new Response(200,"成功",null);
+    }
+
+    @CrossOrigin
+    @GetMapping("/api/note/{id}")
+    @ResponseBody
+    public Response getNoteById(@PathVariable("id") int id){
+        Note note=noteService.getById(id);
+        return new Response(200,"成功",note);
     }
 }
