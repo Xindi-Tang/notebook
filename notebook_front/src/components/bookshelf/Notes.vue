@@ -14,8 +14,8 @@
               </el-tooltip>
             </router-link>
             <el-tooltip class="button-tip" transition="0s" effect="dark" content="查看笔记内容" placement="top-start">
-              <el-button class="note-operation" type="text" icon="el-icon-more" @click="readNote(item.id)"></el-button>
-            </el-tooltip>
+                <el-button class="note-operation" type="text" icon="el-icon-more" @click="readNote(item.id)"></el-button>
+              </el-tooltip>
             <el-tooltip class="button-tip" transition="0s" effect="dark" content="编辑笔记标题与简介" placement="top-start">
               <el-button class="note-operation" type="text" icon="el-icon-edit-outline" @click="editInfo(item)"></el-button>
             </el-tooltip>
@@ -107,7 +107,7 @@
           },
           readNote(id){
             this.$router.push({
-              path:'/note/edit',
+              path:'/note/detail',
               // name:'NoteEdit',
               query:{
                 noteId:id

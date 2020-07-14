@@ -47,7 +47,7 @@
           var _this = this;
           var url;
           if(!_this.isCreate){
-            url='/update/note/'+this.form.id.toString()+'/info';
+            url='/update/info/note/'+this.form.id.toString();
           }
           else{
             url = '/update/category/'+this.cid.toString()+'/note/add';

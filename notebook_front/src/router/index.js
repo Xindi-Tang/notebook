@@ -7,6 +7,7 @@ import Index from "../components/Index";
 import Home from "../components/home/Home";
 import BookShelf from "../components/bookshelf/BookShelf";
 import NoteEdit from "../components/note/NoteEdit";
+import NoteDetail from "../components/note/NoteDetail";
 
 Vue.use(Router)
 //解决ElementUI导航栏的vue-router重复点击菜单报错问题
@@ -52,6 +53,11 @@ export default new Router({
           path: '/note/edit',
           name: 'NoteEdit',
           component: NoteEdit
+        },
+        {
+          path: '/note/detail',
+          name: 'NoteDetail',
+          component: NoteDetail
         }
       ]
     }
