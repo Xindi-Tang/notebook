@@ -66,12 +66,18 @@ public class NoteController {
     }
 
     @CrossOrigin
-    @PostMapping("/api/update/note/{id}/info")
+    @PostMapping("/api/update/{type}/note/{id}")
     @ResponseBody
-    public Response updateNoteInfo(@RequestBody Note requestNote, @PathVariable("id") int id){
+    public Response updateNoteInfo(@RequestBody Note requestNote, @PathVariable("id") int id, @PathVariable("type") String type){
         Note note = noteService.getById(requestNote.getId());
-        note.setName(requestNote.getName());
-        note.setAbs(requestNote.getAbs());
+        if(type.equals("info")){
+            note.setName(requestNote.getName());
+            note.setAbs(requestNote.getAbs());
+        }
+        if(type.equals("content")){
+            note.setContentHtml(requestNote.getContentHtml());
+            note.setContentMd(requestNote.getContentMd());
+        }
         note.setLastModifiedTime(new Timestamp(System.currentTimeMillis()));
         noteService.updateNote(note);
         return new Response(200,"成功",null);
