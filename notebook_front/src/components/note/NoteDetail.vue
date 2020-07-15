@@ -1,25 +1,32 @@
 <template>
-    <div>
-      <el-card class="box-card note" shadow="never" v-model="note">
-        <div slot="header" class="clearfix">
-          <span>{{note.name}}</span>
-          <el-button style="float: right; padding: 3px 0" type="text">
-            <i class="el-icon-edit"></i>
-          </el-button>
-          <el-button style="float: right; padding: 3px 0;margin-right: 5px" type="text">
-            <i class="el-icon-tickets"></i>
-          </el-button>
-        </div>
-        <el-scrollbar style="height: 100%">
-          <div v-html="note.contentHtml" class="text note-html markdown-body"></div>
-        </el-scrollbar>
-      </el-card>
-    </div>
+    <el-row style="margin-top:10px">
+      <el-col :span="1">
+        <bookmark ref="bookmark"></bookmark>
+      </el-col>
+      <el-col :span="23">
+        <el-card class="box-card note" shadow="never" v-model="note">
+          <div slot="header" class="clearfix">
+            <span>{{note.name}}</span>
+            <el-button style="float: right; padding: 3px 0" type="text">
+              <i class="el-icon-edit"></i>
+            </el-button>
+            <el-button style="float: right; padding: 3px 0;margin-right: 5px" type="text">
+              <i class="el-icon-tickets"></i>
+            </el-button>
+          </div>
+          <el-scrollbar style="height: 100%">
+            <div v-html="note.contentHtml" class="text note-html markdown-body"></div>
+          </el-scrollbar>
+        </el-card>
+      </el-col>
+    </el-row>
 </template>
 
 <script>
+  import Bookmark from "./Bookmark";
     export default {
-        name: "NoteDetail",
+      name: "NoteDetail",
+      components: {Bookmark},
       data(){
         return{
           note:{
@@ -40,12 +47,35 @@
             .then(function (response) {
               if(response.data.status===200){
                 _this.note=response.data.object;
+                _this.getTitles(_this.note.contentHtml);
               }
               console.log(response.data.object)
             })
             .catch(function (error){
               console.log(error)
             })
+        },
+        getTitles(contentHtml) {
+          let div = document.createElement("div");
+          div.innerHTML = contentHtml;
+          let doc = div.children;
+          let titles = [];
+          for (var i = 0; i < doc.length; i++) {
+            if (doc[i].nodeName.indexOf("H") !== -1) {
+              console.log(doc[i]);
+              const level = parseInt(doc[i].nodeName[1]);
+              let stars = "";
+              for (var j = 0; j < level; j++) {
+                stars += " * ";
+              }
+              titles.push({
+                href: "#" + doc[i].children[0].getAttribute("id"),
+                name: stars + doc[i].innerText,
+                type: doc[i].nodeName[1]
+              })
+            }
+          }
+          this.$refs.bookmark.titles = titles;
         }
       }
     }
