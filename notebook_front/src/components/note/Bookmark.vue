@@ -1,6 +1,13 @@
 <template>
     <div>
-      <li v-for="(item,i) in titles">{{item}}</li>
+      <div style="margin-top: 100px;margin-left: 10px">
+        <el-menu class="el-menu-vertical-demo bookmark-area">
+          <el-menu-item v-for="(item,i) in titles" :key="i" class="bookmark-item" @click="goTo(item.href)">
+            <a :class="'title-index title-h'+item.type"  >{{item.name}}</a>
+<!--            <span slot="title" style="vertical-align: center"></span>-->
+          </el-menu-item>
+        </el-menu>
+      </div>
     </div>
 </template>
 
@@ -11,10 +18,22 @@
         return{
           titles:[]
         }
+      },
+      methods: {
+        goTo(id){
+          console.log(id);
+          console.log(document.getElementById(id));
+          document.getElementById(id).scrollIntoView(true)
+        }
       }
     }
 </script>
 
-<style scoped>
-
+<style>
+  .el-scrollbar {
+    overflow-x: hidden!important;
+  }
+  .el-scrollbar__wrap{
+    overflow-x: hidden!important;
+  }
 </style>
