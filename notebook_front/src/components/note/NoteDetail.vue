@@ -1,7 +1,7 @@
 <template>
-    <el-row style="margin-top:10px">
+    <el-row style="margin-top:10px" >
       <el-col :span="4">
-        <bookmark ref="bookmark"></bookmark>
+        <bookmark ref="bookmark" style="height: 450px"></bookmark>
       </el-col>
       <el-col :span="20">
         <el-card class="box-card note" shadow="never" v-model="note">
@@ -84,5 +84,30 @@
 </script>
 
 <style scoped>
-
+  .note {
+    border: 2px solid #EBEEF5!important;
+    width: 95%;
+    text-align: left;
+    margin: auto;
+    padding: 0px;
+  }
+  .note >>> .el-card__body{
+    padding: 0px 0px 0px 40px;
+  }
+  .note >>> .clearfix{
+    padding: 0px 0px 0px 20px;
+  }
+  .note-html{
+    height: 450px;
+  }
+  .back{
+    background-color: #585858!important;
+    border: 0px;
+    position: absolute;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    left: 10px;
+    padding: 5px 5px;
+    z-index: 99;
+  }
 </style>
