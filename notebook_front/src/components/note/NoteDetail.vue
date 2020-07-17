@@ -1,17 +1,17 @@
 <template>
     <el-row style="margin-top:10px" >
-      <el-col :span="4">
+      <el-col :span="bookmarkCol">
         <bookmark ref="bookmark" style="height: 450px"></bookmark>
       </el-col>
-      <el-col :span="20">
+      <el-col :span="noteCol">
         <el-card class="box-card note" shadow="never" v-model="note">
           <div slot="header" class="clearfix">
             <span>{{note.name}}</span>
             <el-button style="float: right; padding: 3px 0" type="text">
-              <i class="el-icon-edit"></i>
+              <i class="el-icon-edit" @click="edit(note.id)"></i>
             </el-button>
             <el-button style="float: right; padding: 3px 0;margin-right: 5px" type="text">
-              <i class="el-icon-tickets"></i>
+              <i class="el-icon-tickets" @click="bookmarkSwitch"></i>
             </el-button>
           </div>
           <el-scrollbar style="height: 100%">
@@ -31,7 +31,10 @@
         return{
           note:{
             // contentMd:''
-          }
+          },
+          bookmarkStatus:true,
+          bookmarkCol:3,
+          noteCol:21,
         }
       },
       mounted() {
@@ -47,6 +50,7 @@
             .then(function (response) {
               if(response.data.status===200){
                 _this.note=response.data.object;
+                let newHtml = _this.appendArrowButton(_this.note.contentHtml);
                 _this.getTitles(_this.note.contentHtml);
               }
               console.log(response.data.object)
@@ -54,6 +58,23 @@
             .catch(function (error){
               console.log(error)
             })
+        },
+        appendArrowButton(contentHtml){
+          let div = document.createElement("div")
+          div.innerHTML = contentHtml
+          let doc = div.children
+          for(var i=0;i<doc.length;i++){
+            if(doc[i].nodeName.indexOf("H") !== -1){
+              let operationBtn = document.createElement("i")
+              operationBtn.setAttribute("class","el-icon-arrow-down")
+              operationBtn.style.cursor = "pointer"
+              operationBtn.style.marginLeft = "5px"
+              operationBtn.style.fontSize = "20px"
+              doc[i].appendChild(operationBtn)
+            }
+          }
+          console.log(div.innerHTML);
+          return div.innerHTML;
         },
         getTitles(contentHtml) {
           let div = document.createElement("div"); //get a div element
@@ -63,11 +84,10 @@
           let titles = [];
           for (var i = 0; i < doc.length; i++) {
             if (doc[i].nodeName.indexOf("H") !== -1) {
-              console.log(doc[i].nodeName[0]);
               const level = parseInt(doc[i].nodeName[1]);
               let stars = "";
               for (var j = 0; j < level; j++) {
-                stars += " * ";
+                stars += " ";
               };
               console.log(doc[i].children[0]);
               titles.push({
@@ -78,7 +98,29 @@
             }
           }
           this.$refs.bookmark.titles = titles;
-        }
+        },
+        edit(id){
+          this.$router.push({
+            path:'/note/edit',
+            query:{
+              noteId:id
+            }
+          })
+        },
+        bookmarkSwitch(){
+          if(this.bookmarkStatus){
+            this.colSwitch(0,24,0)
+          }
+          else{
+            this.colSwitch(3,21,0)
+          }
+          this.bookmarkStatus = !this.bookmarkStatus
+        },
+        colSwitch(b,n,q){
+          this.bookmarkCol = b!=null?b:this.bookmarkCol
+          this.noteCol = n!=null?n:this.noteCol
+          this.quoteCol = q!=null?q:this.quoteCol
+        },
       }
     }
 </script>

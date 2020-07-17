@@ -64,6 +64,14 @@
             console.log(error)
 
           })
+        },
+        read(id){
+          this.$router.push({
+            path:'/note/detail',
+            query:{
+              noteId:id
+            }
+          })
         }
       }
     }
