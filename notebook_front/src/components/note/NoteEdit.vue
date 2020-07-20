@@ -141,6 +141,7 @@
           var prefix = "notelink://"
           this.noteLink.link = prefix+(this.noteList[this.noteLink.noteIndex].id)+"&"+this.noteLink.titleID
         },
+
       }
     }
 </script>

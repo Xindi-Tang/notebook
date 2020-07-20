@@ -7,18 +7,36 @@
         <el-card class="box-card note" shadow="never" v-model="note">
           <div slot="header" class="clearfix">
             <span>{{note.name}}</span>
-            <el-button style="float: right; padding: 3px 0" type="text">
+            <el-button style="float: right; padding: 3px 0" type="text" :title="'前往编辑'">
               <i class="el-icon-edit" @click="edit(note.id)"></i>
             </el-button>
-            <el-button style="float: right; padding: 3px 0;margin-right: 5px" type="text">
+            <el-button style="float: right; padding: 3px 0;margin-right: 5px" type="text" :title="'打开/关闭左侧书签栏'">
               <i class="el-icon-tickets" @click="bookmarkSwitch"></i>
             </el-button>
           </div>
           <el-scrollbar style="height: 100%">
-            <div v-html="note.contentHtml" class="text note-html markdown-body"></div>
+            <div v-html="note.contentHtml" class="text note-html markdown-body" @click="handleHtmlClick"></div>
           </el-scrollbar>
         </el-card>
       </el-col>
+
+      <el-col :span="quoteCol" style="border-left: 1px solid #585858;">
+        <el-card class="box-card note" shadow="never" v-model="quote">
+          <div slot="header" class="clearfix">
+            <span>{{quote.name}}</span>
+            <el-button style="float: right; padding: 3px 0" type="text" :title="'前往编辑'">
+              <i class="el-icon-edit" @click="edit(quote.id)"></i>
+            </el-button>
+            <el-button style="float: right; padding: 3px 0" type="text" :title="'关闭该引用笔记'">
+              <i class="el-icon-close" @click="closeQuote"></i>
+            </el-button>
+          </div>
+          <el-scrollbar style="height: 100%" id="quoteArea">
+            <div v-html="quote.contentHtml" class="text note-html markdown-body"></div>
+          </el-scrollbar>
+        </el-card>
+      </el-col>
+
     </el-row>
 </template>
 
@@ -32,9 +50,13 @@
           note:{
             // contentMd:''
           },
+          quote:{
+          },
           bookmarkStatus:true,
+          quoteStatus:false,
           bookmarkCol:3,
           noteCol:21,
+          quoteCol:0
         }
       },
       mounted() {
@@ -51,6 +73,7 @@
               if(response.data.status===200){
                 _this.note=response.data.object;
                 let newHtml = _this.appendArrowButton(_this.note.contentHtml);
+                _this.note.contentHtml = _this.removeTarget(newHtml)
                 _this.getTitles(_this.note.contentHtml);
               }
               console.log(response.data.object)
@@ -107,14 +130,61 @@
             }
           })
         },
+        removeTarget(contentHtml){
+          let div = document.createElement("div")
+          div.innerHTML = contentHtml
+          let doc = div.children
+          for(var i=0;i<doc.length;i++){
+            if(doc[i].nodeName === "P"){
+              for(var j=0;j<doc[i].children.length;j++){
+                if(doc[i].children[j].nodeName === "A"){
+                  if(doc[i].children[j].getAttribute("href").indexOf("notelink://") !== -1){
+                    console.log(doc[i].children[j]);
+                    doc[i].children[j].removeAttribute("target");
+                  }
+                }
+              }
+            }
+          }
+          return div.innerHTML
+        },
+        handleHtmlClick(ev){
+          console.log(ev);
+          if(ev.target.nodeName === "A" && ev.target.getAttribute("href").indexOf("notelink://") !== -1){
+            this.quoteNote(ev)
+          }
+          else if(ev.target.nodeName === "I"){
+            this.foldSwitch(ev)
+          }
+        },
         bookmarkSwitch(){
           if(this.bookmarkStatus){
-            this.colSwitch(0,24,0)
+            if(this.quoteStatus){
+              this.colSwitch(0,14,10)
+            }
+            else{
+              this.colSwitch(0,24,0)
+            }
           }
           else{
-            this.colSwitch(3,21,0)
+            if(this.quoteStatus){
+              this.colSwitch(3,11,10)
+            }
+            else{
+              this.colSwitch(3,21,0)
+            }
           }
           this.bookmarkStatus = !this.bookmarkStatus
+        },
+        closeQuote() {
+          if(this.bookmarkStatus){
+            this.colSwitch(3,21,0)
+          }
+          else{
+            this.colSwitch(0,24,0)
+          }
+          this.quoteStatus = false
+          this.quote = {}
         },
         colSwitch(b,n,q){
           this.bookmarkCol = b!=null?b:this.bookmarkCol
