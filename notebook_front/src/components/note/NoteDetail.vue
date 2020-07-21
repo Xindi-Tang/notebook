@@ -47,6 +47,7 @@
 
 <script>
   import Bookmark from "./Bookmark";
+  import $ from "jquery";
     export default {
       name: "NoteDetail",
       components: {Bookmark},
