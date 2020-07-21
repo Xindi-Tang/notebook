@@ -1,4 +1,8 @@
 <template>
+  <div>
+    <el-row>
+      <el-button type="primary" icon="el-icon-back"  class="back" @click="back"></el-button>
+    </el-row>
     <el-row style="margin-top:10px" >
       <el-col :span="bookmarkCol">
         <bookmark ref="bookmark" style="height: 450px"></bookmark>
@@ -38,6 +42,7 @@
       </el-col>
 
     </el-row>
+  </div>
 </template>
 
 <script>
@@ -56,7 +61,8 @@
           quoteStatus:false,
           bookmarkCol:3,
           noteCol:21,
-          quoteCol:0
+          quoteCol:0,
+          quoteLink:'',
         }
       },
       mounted() {
@@ -65,6 +71,19 @@
           // console.log(this.$route.query.noteId)
         }
       },
+      watch:{
+        quoteLink(){
+          var _this = this
+          if(_this.quoteLink !== ''){
+            this.$nextTick(function () {
+              $('#quoteArea').children(":first").animate({
+                scrollTop:document.getElementById(_this.quoteLink).offsetTop
+              },1000)
+            })
+          }
+        }
+      },
+
       methods:{
         loadNote(id){
           var _this=this;
@@ -81,6 +100,9 @@
             .catch(function (error){
               console.log(error)
             })
+        },
+        back(){
+          this.$router.go(-1);
         },
         appendArrowButton(contentHtml){
           let div = document.createElement("div")
@@ -151,10 +173,44 @@
         handleHtmlClick(ev){
           console.log(ev);
           if(ev.target.nodeName === "A" && ev.target.getAttribute("href").indexOf("notelink://") !== -1){
-            this.quoteNote(ev)
+            this.quoteNote(ev);
           }
           else if(ev.target.nodeName === "I"){
             this.foldSwitch(ev)
+          }
+        },
+        quoteNote(ev){
+          var _this = this;
+          // var tempLink = (_this.quoteLink).toString();
+          // _this.quoteLink = '';
+          var href = ev.target.getAttribute("href");
+          var noteId = href.match(/(\d+)[&]/)[1];
+          var titleId = href.match(/[&](.*)/)[1];
+          console.log(noteId,titleId);
+          // in case touch by mistake & no current quote at the same time
+          if(_this.quote.id !== undefined && noteId === _this.quote.id.toString()){
+            _this.quoteLink = titleId;
+            //console.log("same")
+            // $('#quoteArea').children(":first").animate({
+            //   scrollTop:document.getElementById(_this.quoteLink).offsetTop
+            // },1000);
+          }
+          else {
+            _this.axios.get('note/'+noteId.toString())
+              .then(function (response) {
+                if(response.data.status === 200){
+                  _this.quote = response.data.object;
+                  if(_this.quoteStatus===false){
+                    _this.quoteStatus = true;
+                    _this.bookmarkStatus = !_this.bookmarkStatus;
+                    _this.bookmarkSwitch();
+                  }
+                  _this.quoteLink = titleId;
+                }
+              })
+              .catch(function (error) {
+                console.log(error)
+              });
           }
         },
         bookmarkSwitch(){
@@ -187,9 +243,9 @@
           this.quote = {}
         },
         colSwitch(b,n,q){
-          this.bookmarkCol = b!=null?b:this.bookmarkCol
-          this.noteCol = n!=null?n:this.noteCol
-          this.quoteCol = q!=null?q:this.quoteCol
+          this.bookmarkCol = b;
+          this.noteCol = n;
+          this.quoteCol = q;
         },
       }
     }
