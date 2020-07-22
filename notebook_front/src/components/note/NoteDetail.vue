@@ -74,7 +74,8 @@
       },
       watch:{
         quoteLink(){
-          var _this = this
+          console.log("watch");
+          var _this = this;
           if(_this.quoteLink !== ''){
             this.$nextTick(function () {
               $('#quoteArea').children(":first").animate({
@@ -172,7 +173,6 @@
           return div.innerHTML
         },
         handleHtmlClick(ev){
-          console.log(ev);
           if(ev.target.nodeName === "A" && ev.target.getAttribute("href").indexOf("notelink://") !== -1){
             this.quoteNote(ev);
           }
@@ -183,20 +183,26 @@
         quoteNote(ev){
           var _this = this;
           // var tempLink = (_this.quoteLink).toString();
-          // _this.quoteLink = '';
+          _this.quoteLink = '';
+          console.log(_this.quoteLink);
           var href = ev.target.getAttribute("href");
           var noteId = href.match(/(\d+)[&]/)[1];
           var titleId = href.match(/[&](.*)/)[1];
           console.log(noteId,titleId);
-          // in case touch by mistake & no current quote at the same time
+          // in case touch by mistake & no current quote at the same time, and we even don't have quote for first call of quoteNote
           if(_this.quote.id !== undefined && noteId === _this.quote.id.toString()){
+            console.log("inif");
             _this.quoteLink = titleId;
+            $('#quoteArea').children(":first").animate({
+              scrollTop:document.getElementById(_this.quoteLink).offsetTop
+            },1000)
             //console.log("same")
             // $('#quoteArea').children(":first").animate({
             //   scrollTop:document.getElementById(_this.quoteLink).offsetTop
             // },1000);
           }
           else {
+            console.log("inelse");
             _this.axios.get('note/'+noteId.toString())
               .then(function (response) {
                 if(response.data.status === 200){
