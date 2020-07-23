@@ -195,11 +195,7 @@
             _this.quoteLink = titleId;
             $('#quoteArea').children(":first").animate({
               scrollTop:document.getElementById(_this.quoteLink).offsetTop
-            },1000)
-            //console.log("same")
-            // $('#quoteArea').children(":first").animate({
-            //   scrollTop:document.getElementById(_this.quoteLink).offsetTop
-            // },1000);
+            },1000);
           }
           else {
             console.log("inelse");

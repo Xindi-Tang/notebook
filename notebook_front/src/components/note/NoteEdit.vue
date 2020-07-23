@@ -27,6 +27,10 @@
         <el-row>
           <el-form>
             <el-form-item>
+              <el-input placeholder="请输入链接描述" v-model="noteLink.input" clearable>
+              </el-input>
+            </el-form-item>
+            <el-form-item>
               <el-select v-model="noteLink.noteIndex" placeholder="请选择链接笔记" @change="getTitleList" style="width: 100%">
                 <el-option v-for="(item,i) in noteList" :label="item.name" :value="i" :key="item.id" ></el-option>
               </el-select>
@@ -38,11 +42,25 @@
             </el-form-item>
           </el-form>
         </el-row>
+        <el-row>
+          <el-input style="width: 65%" v-model="noteLink.link" id="notelink"></el-input>
+          <el-button
+            data-clipboard-target="#notelink"
+            data-clipboard-action="copy"
+            type="primary"
+            icon="el-icon-document-copy"
+            style="font-size: 13px;margin-left: 0px;width: 30%;float: right"
+            class="copy-btn"
+            @click="copyLink">
+            复制
+          </el-button>
+        </el-row>
       </el-dialog>
     </div>
 </template>
 
 <script>
+    import Clipboard from 'clipboard';
     export default {
       name: "NoteEdit",
       data(){
@@ -53,11 +71,15 @@
             noteLink: {
               noteIndex:'',
               titleID:'',
-              link:''
+              link:'',
+              input:''
             },
             dialogFormVisible:false,
             noteList:[],
-            titleList:[]
+            titleList:[],
+            link_text: '',
+            link_addr: '',
+            link_type: 'link'
           }
       },
       mounted() {
@@ -108,38 +130,58 @@
           })
         },
         getNoteList(){
-          var _this = this
+          var _this = this;
           this.axios.get('/notes')
             .then(function (response) {
               if(response.status === 200){
-                _this.noteList = response.data
-                _this.dialogFormVisible = true
-                console.log(_this.noteList)
+                _this.noteList = response.data;
+                _this.dialogFormVisible = true;
+                console.log(_this.noteList);
               }
             })
             .catch(function (error) {
-              console.log(error)
+              console.log(error);
             })
         },
         getTitleList(){
-          this.titleList = [];
-          var content = this.noteList[this.noteLink.noteIndex].contentHtml
-          let div = document.createElement("div")
-          div.innerHTML = content
-          let doc = div.children
+          this.titleList = []; //eliminate the content of last undetermined choice
+          this.noteLink.titleID='';
+          this.noteLink.link='';
+          var content = this.noteList[this.noteLink.noteIndex].contentHtml;
+          let div = document.createElement("div");
+          div.innerHTML = content;
+          let doc = div.children;
           for(var i=0;i<doc.length;i++){
             if(doc[i].nodeName.indexOf("H") !== -1){
               this.titleList.push({
                 id:doc[i].children[0].getAttribute("id"),
                 name:doc[i].innerText,
-              })
+              });
             }
           }
         },
         generateLink(){
-          this.noteLink.link = ''
-          var prefix = "notelink://"
-          this.noteLink.link = prefix+(this.noteList[this.noteLink.noteIndex].id)+"&"+this.noteLink.titleID
+          this.noteLink.link = '';
+          var prefix = "notelink://";
+          this.noteLink.link = prefix+(this.noteList[this.noteLink.noteIndex].id)+"&"+this.noteLink.titleID;
+        },
+        copyLink(){
+          let clipboard = new Clipboard('.copy-btn')
+          clipboard.on('success', e => {
+            this.$message({
+              type: 'success',
+              message:'复制成功'
+            });
+            this.dialogFormVisible = false
+            clipboard.destroy()
+          })
+          clipboard.on('error', e => {
+            this.$message('复制失败');
+            this.dialogFormVisible = false
+            setTimeout(() => {
+            }, 500)
+            clipboard.destroy()
+          })
         },
 
       }
