@@ -7,6 +7,7 @@
             <el-button style="float: right; padding: 3px 0" type="text"><i class="el-icon-more" @click="read(note.id)"></i></el-button>
           </div>
             <mavon-editor
+              ref="md"
               v-model="note.contentMd"
               @save="saveNote">
               <button
@@ -19,67 +20,26 @@
             </mavon-editor>
         </el-card>
       </el-col>
-      <el-dialog
-        :visible.sync="dialogFormVisible"
-        width="40%"
-        center
-        :title="'设置链接内容'">
-        <el-row>
-          <el-form>
-            <el-form-item>
-              <el-input placeholder="请输入链接描述" v-model="noteLink.input" clearable>
-              </el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-select v-model="noteLink.noteIndex" placeholder="请选择链接笔记" @change="getTitleList" style="width: 100%">
-                <el-option v-for="(item,i) in noteList" :label="item.name" :value="i" :key="item.id" ></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-select v-model="noteLink.titleID" placeholder="请选择链接标题" @change="generateLink" style="width: 100%">
-                <el-option v-for="item in titleList" :label="item.name" :value="item.id" :key="item.id"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-        </el-row>
-        <el-row>
-          <el-input style="width: 65%" v-model="noteLink.link" id="notelink"></el-input>
-          <el-button
-            data-clipboard-target="#notelink"
-            data-clipboard-action="copy"
-            type="primary"
-            icon="el-icon-document-copy"
-            style="font-size: 13px;margin-left: 0px;width: 30%;float: right"
-            class="copy-btn"
-            @click="copyLink">
-            复制
-          </el-button>
-        </el-row>
-      </el-dialog>
+      <quote-note-form ref="quoteNote" @addLink="addLink"></quote-note-form>
     </div>
 </template>
 
 <script>
-    import Clipboard from 'clipboard';
+  import QuoteNoteForm from "./QuoteNoteForm";
     export default {
       name: "NoteEdit",
+      components:{QuoteNoteForm},
       data(){
           return{
             note:{
               // contentMd:''
             },
             noteLink: {
+              input:'',
               noteIndex:'',
               titleID:'',
-              link:'',
-              input:''
+              link:''
             },
-            dialogFormVisible:false,
-            noteList:[],
-            titleList:[],
-            link_text: '',
-            link_addr: '',
-            link_type: 'link'
           }
       },
       mounted() {
@@ -134,8 +94,8 @@
           this.axios.get('/notes')
             .then(function (response) {
               if(response.status === 200){
-                _this.noteList = response.data;
-                _this.dialogFormVisible = true;
+                _this.$refs.quoteNote.noteList = response.data;
+                _this.$refs.quoteNote.dialogFormVisible = true;
                 console.log(_this.noteList);
               }
             })
@@ -143,46 +103,37 @@
               console.log(error);
             })
         },
-        getTitleList(){
-          this.titleList = []; //eliminate the content of last undetermined choice
-          this.noteLink.titleID='';
-          this.noteLink.link='';
-          var content = this.noteList[this.noteLink.noteIndex].contentHtml;
-          let div = document.createElement("div");
-          div.innerHTML = content;
-          let doc = div.children;
-          for(var i=0;i<doc.length;i++){
-            if(doc[i].nodeName.indexOf("H") !== -1){
-              this.titleList.push({
-                id:doc[i].children[0].getAttribute("id"),
-                name:doc[i].innerText,
-              });
-            }
-          }
-        },
-        generateLink(){
-          this.noteLink.link = '';
-          var prefix = "notelink://";
-          this.noteLink.link = prefix+(this.noteList[this.noteLink.noteIndex].id)+"&"+this.noteLink.titleID;
-        },
-        copyLink(){
-          let clipboard = new Clipboard('.copy-btn')
-          clipboard.on('success', e => {
-            this.$message({
-              type: 'success',
-              message:'复制成功'
-            });
-            this.dialogFormVisible = false
-            clipboard.destroy()
-          })
-          clipboard.on('error', e => {
-            this.$message('复制失败');
-            this.dialogFormVisible = false
-            setTimeout(() => {
-            }, 500)
-            clipboard.destroy()
-          })
-        },
+        // getTitleList(){
+        //   this.titleList = []; //eliminate the content of last undetermined choice
+        //   this.noteLink.titleID='';
+        //   this.noteLink.link='';
+        //   var content = this.noteList[this.noteLink.noteIndex].contentHtml;
+        //   let div = document.createElement("div");
+        //   div.innerHTML = content;
+        //   let doc = div.children;
+        //   for(var i=0;i<doc.length;i++){
+        //     if(doc[i].nodeName.indexOf("H") !== -1){
+        //       this.titleList.push({
+        //         id:doc[i].children[0].getAttribute("id"),
+        //         name:doc[i].innerText,
+        //       });
+        //     }
+        //   }
+        // },
+        // generateLink(){
+        //   this.noteLink.link = '';
+        //   var prefix = "notelink://";
+        //   this.noteLink.link = prefix+(this.noteList[this.noteLink.noteIndex].id)+"&"+this.noteLink.titleID;
+        // },
+        // closeForm(){
+        //   this.dialogFormVisible=false;
+        //   this.noteLink={};
+        // },
+        addLink(type,title,link){
+          console.log(type,title,link);
+          this.$refs.md.toolbar_left_addlink(type,title,link);
+          this.$refs.quoteNote.closeForm('noteEdit');
+        }
 
       }
     }
