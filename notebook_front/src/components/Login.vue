@@ -36,8 +36,10 @@
           .then(function (response) {
             console.log(response.data.status)
             if(response.data.status==200){
-              _this.$store.commit('login',response.data.object),
-              _this.$router.push({path:"/"})
+              console.log(response.data.object);
+              _this.$store.commit('login',response.data.object);
+              var path = _this.$route.query.redirect;
+              _this.$router.replace({path:path === undefined ? '/' : path});
             }
             else{
               alert("账号或密码错误")

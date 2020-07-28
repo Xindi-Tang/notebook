@@ -38,26 +38,41 @@ export default new Router({
       name: 'Index',
       component: Index,
       redirect:"/home",
+      meta: {
+        requireAuth:true
+      },
       children:[
         {
           path: '/home',
           name:'Home',
-          component:Home
+          component:Home,
+          meta: {
+            requireAuth:true
+          }
         },
         {
           path: '/bookshelf',
           name: 'BookShelf',
-          component: BookShelf
+          component: BookShelf,
+          meta: {
+            requireAuth:true
+          }
         },
         {
           path: '/note/edit',
           name: 'NoteEdit',
-          component: NoteEdit
+          component: NoteEdit,
+          meta: {
+            requireAuth:true
+          }
         },
         {
           path: '/note/detail',
           name: 'NoteDetail',
-          component: NoteDetail
+          component: NoteDetail,
+          meta: {
+            requireAuth:true
+          }
         }
       ]
     }

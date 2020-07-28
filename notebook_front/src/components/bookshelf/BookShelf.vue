@@ -33,7 +33,7 @@
             .then(function(response){
               if(response.status===200){
                 _this.$refs.notes.notes=response.data
-                console.log(response)
+                // console.log(response)
               }
             })
         },
