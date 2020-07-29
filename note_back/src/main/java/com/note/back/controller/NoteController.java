@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -71,6 +72,14 @@ public class NoteController {
     public List<Note> getNoteByCategory(@PathVariable("id") int id){
         return noteService.getNotesByCategory(id);
     }
+
+    @CrossOrigin
+    @RequestMapping("/api/categories/{cid}/notes/{pid}")
+    @ResponseBody
+    public List<Note> getNoteByCategory(@PathVariable("cid") int cid, @PathVariable("pid") int pid){
+        return noteService.getNotesByPage(pid,2,0,cid);
+    }
+
 
     @CrossOrigin
     @PostMapping("/api/update/{type}/note/{id}")

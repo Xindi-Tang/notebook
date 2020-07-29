@@ -5,9 +5,18 @@ import com.note.back.dao.CategoryDao;
 import com.note.back.dao.NoteDao;
 import com.note.back.pojo.Category;
 import com.note.back.pojo.Note;
+import jdk.nashorn.internal.runtime.Context;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Predicate;
+import java.util.*;
 
 import java.util.List;
 
@@ -38,4 +47,47 @@ public class NoteService {
     public void deleteById(int id) {
         noteDao.deleteById(id);
     }
+
+    /**
+     * 获取分页结果集
+     *
+     * @param pageNo
+     * @param pageSize
+     * @param userId
+     * @param categoryId
+     * @return
+     */
+    public List<Note> getNotesByPage(int pageNo, int pageSize, Integer userId, Integer categoryId) {
+        List<Note> result = null;
+
+        // 构造自定义查询条件
+        Specification<Note> queryCondition = new Specification<Note>() {
+            @Override
+            public Predicate toPredicate(Root<Note> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicateList = new ArrayList<>();
+                if (userId != null) {
+                    predicateList.add(criteriaBuilder.equal(root.get("author_id"), 4));
+                }
+                if (categoryId != null) {
+                    predicateList.add(criteriaBuilder.equal(root.get("category_id"), categoryId));
+                }
+                return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
+            }
+        };
+
+        // 分页和不分页，这里按起始页和每页展示条数为0时默认为不分页，分页的话按创建时间降序
+        try {
+            if (pageNo == 0 && pageSize == 0) {
+
+                result = this.getNotesByCategory(categoryId);
+            } else {
+                result = noteDao.findAllByCategory(queryCondition, PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "created_time"))).getContent();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return result;
+    }
+
 }
