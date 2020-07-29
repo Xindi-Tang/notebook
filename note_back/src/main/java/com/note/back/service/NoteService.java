@@ -59,17 +59,22 @@ public class NoteService {
      */
     public List<Note> getNotesByPage(int pageNo, int pageSize, Integer userId, Integer categoryId) {
         List<Note> result = null;
+        System.out.println("inMostOut");
+        System.out.println(userId.toString()+categoryId.toString());
 
         // 构造自定义查询条件
         Specification<Note> queryCondition = new Specification<Note>() {
             @Override
             public Predicate toPredicate(Root<Note> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicateList = new ArrayList<>();
+                System.out.println("inP");
                 if (userId != null) {
-                    predicateList.add(criteriaBuilder.equal(root.get("author_id"), 4));
+                    System.out.println("inU");
+                    predicateList.add(criteriaBuilder.equal(root.get("author"), 4));
                 }
                 if (categoryId != null) {
-                    predicateList.add(criteriaBuilder.equal(root.get("category_id"), categoryId));
+                    System.out.println("in");
+                    predicateList.add(criteriaBuilder.equal(root.get("category"), 2));
                 }
                 return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
             }
@@ -78,10 +83,11 @@ public class NoteService {
         // 分页和不分页，这里按起始页和每页展示条数为0时默认为不分页，分页的话按创建时间降序
         try {
             if (pageNo == 0 && pageSize == 0) {
-
-                result = this.getNotesByCategory(categoryId);
+                System.out.println("in");
+//                result = this.getNotesByCategory(categoryId.intValue());
             } else {
-                result = noteDao.findAllByCategory(queryCondition, PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "created_time"))).getContent();
+                System.out.println("in");
+                result = noteDao.findAll(queryCondition, PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdTime"))).getContent();
             }
         } catch (Exception e) {
             System.out.println(e);

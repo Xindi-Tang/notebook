@@ -76,7 +76,8 @@ public class NoteController {
     @CrossOrigin
     @RequestMapping("/api/categories/{cid}/notes/{pid}")
     @ResponseBody
-    public List<Note> getNoteByCategory(@PathVariable("cid") int cid, @PathVariable("pid") int pid){
+    public List<Note> getNoteByPage(@PathVariable("cid") Integer cid, @PathVariable("pid") int pid){
+        System.out.println(cid);
         return noteService.getNotesByPage(pid,2,0,cid);
     }
 

@@ -12,5 +12,5 @@ import java.util.List;
 
 public interface NoteDao extends JpaRepository<Note,Integer> , JpaSpecificationExecutor<Note> {
     List<Note> findAllByCategory(Category category);
-    Page<Note> findAllByCategory(Specification<Note> specification, Pageable pageable);
+    Page<Note> findAll(Specification<Note> specification, Pageable pageable);
 }
