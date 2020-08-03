@@ -74,7 +74,7 @@ public class NoteService {
                 }
                 if (categoryId != null) {
                     System.out.println("in");
-                    predicateList.add(criteriaBuilder.equal(root.get("category"), 2));
+                    predicateList.add(criteriaBuilder.equal(root.get("category"), categoryId));
                 }
                 return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
             }
