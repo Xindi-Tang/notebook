@@ -36,6 +36,11 @@ public class NoteService {
         return noteDao.findAllByCategory(category);
     }
 
+    public int getNotesNumByCategory(int id){
+        Category category = categoryDao.getOne(id);
+        return noteDao.findAllByCategory(category).size();
+    }
+
     public Note getById(int id){
         return noteDao.findById(id).get();
     }

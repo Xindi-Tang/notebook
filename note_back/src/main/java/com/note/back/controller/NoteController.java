@@ -74,11 +74,18 @@ public class NoteController {
     }
 
     @CrossOrigin
-    @RequestMapping("/api/categories/{cid}/notes/{pid}")
+    @GetMapping("/api/categories/{id}/notes/length")
     @ResponseBody
-    public List<Note> getNoteByPage(@PathVariable("cid") Integer cid, @PathVariable("pid") int pid){
+    public int getNoteNumByCategory(@PathVariable("id") int id){
+        return noteService.getNotesNumByCategory(id);
+    }
+
+    @CrossOrigin
+    @GetMapping("/api/categories/{cid}/notes/{pid}/{pSize}")
+    @ResponseBody
+    public List<Note> getNoteByPage(@PathVariable("cid") Integer cid, @PathVariable("pid") int pid, @PathVariable("pSize") int pSize){
         System.out.println(cid);
-        return noteService.getNotesByPage(pid,2,0,cid);
+        return noteService.getNotesByPage(pid,pSize,0,cid);
     }
 
 
