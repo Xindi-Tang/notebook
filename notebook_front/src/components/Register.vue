@@ -1,15 +1,21 @@
 <template>
   <div>
-    <el-form ref="form" :model="registerForm" label-width="0px" class="login-box">
+    <el-form ref="form" :model="registerForm" status-icon :rules="rules" label-width="0px" class="login-box">
       <h3 class="login-title">注册账户</h3>
-      <el-form-item>
+      <el-form-item prop="username">
         <el-input placeholder="请输入用户名" v-model="registerForm.username"></el-input>
       </el-form-item>
-      <el-form-item>
+      <el-form-item prop="password">
         <el-input placeholder="请输入密码" v-model="registerForm.password" show-password></el-input>
       </el-form-item>
+      <el-form-item prop="confirmedPsw">
+        <el-input placeholder="再次输入密码" v-model="registerForm.confirmedPsw" show-password></el-input>
+      </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit" class="buttonRegister">注册</el-button>
+        <el-button type="primary" @click="onSubmit('form')" class="buttonRegister">注册</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onReset('form')" class="buttonRegister">重置</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -19,25 +25,81 @@
     export default {
       name: "Register",
       data(){
+        var validatePass = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请输入密码'));
+          } else {
+            if (this.registerForm.confirmedPsw !== '') {
+              this.$refs.form.validateField('confirmedPsw');
+            }
+            callback();
+          }
+        };
+        var validatePass2 = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请再次输入密码'));
+          } else if (value !== this.registerForm.password) {
+            callback(new Error('两次输入密码不一致!'));
+          } else {
+            callback();
+          }
+        };
         return{
           registerForm:{
             username:'',
             password:'',
+            confirmedPsw:'',
+          },
+          rules: {
+            password: [
+              { validator: validatePass, trigger: 'change' }
+            ],
+            confirmedPsw: [
+              { validator: validatePass2, trigger: 'change' }
+            ],
           }
+
         }
       },
       methods:{
-        onSubmit(){
-          this.axios.post("/register", {
-            username:this.registerForm.username,
-            password:this.registerForm.password
-          })
-          .then(function (response) {
-            console.log(response)
-          })
-          .catch(function (error) {
-            console.log(error)
-          })
+        onSubmit(formName){
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
+              var _this=this;
+              this.axios.post("/register", {
+                username:this.registerForm.username,
+                password:this.registerForm.password
+              })
+                .then(function (response) {
+                  _this.$router.push({
+                    path:'/login',
+                    query:{
+                      username:_this.registerForm.username
+                    }
+                  });
+                })
+                .catch(function (error) {
+                  console.log(error)
+                });
+              alert('submit!');
+            } else {
+              console.log('error submit!!');
+              return false;
+            }
+          });
+          // this.axios.post("/register", {
+          //   username:this.registerForm.username,
+          //   password:this.registerForm.password
+          // })
+          // .then(function (response) {
+          //   console.log(response)
+          // })
+          // .catch(function (error) {
+          //   console.log(error)
+          // })
+        },
+        onReset(formName) {
+          this.$refs[formName].resetFields();
         }
       }
     }

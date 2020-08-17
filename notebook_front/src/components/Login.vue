@@ -11,6 +11,11 @@
       <el-form-item>
         <el-button type="primary" @click="onSubmit" class="buttonRegister">登录</el-button>
       </el-form-item>
+      <router-link :to="{path:'/register'}">
+        <el-form-item>
+          <el-button type="primary" class="buttonRegister">注册</el-button>
+        </el-form-item>
+      </router-link>
     </el-form>
   </div>
 </template>
@@ -21,9 +26,14 @@
     data(){
       return{
         loginForm:{
-          username:'txd',
-          password:'123',
+          username:'',
+          password:'',
         }
+      }
+    },
+    mounted() {
+      if(this.$route.query.username){
+        this.loginForm.username=this.$route.query.username;
       }
     },
     methods:{
