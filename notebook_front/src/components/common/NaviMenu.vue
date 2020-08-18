@@ -29,6 +29,7 @@
 
 <script>
   export default {
+    inject:['reload'],
     data() {
       return {
         isLogin:'none',
@@ -69,8 +70,8 @@
         this.axios.get('/logout')
           .then(function (response) {
             if(response.data.status === 200){
-              _this.$store.commit('logout')
-              _this.$router.replace('/login')
+              _this.$store.commit('logout');
+              _this.reload();
             }
           })
           .catch(function (error) {

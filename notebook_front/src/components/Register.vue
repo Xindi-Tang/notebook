@@ -17,6 +17,11 @@
       <el-form-item>
         <el-button type="primary" @click="onReset('form')" class="buttonRegister">重置</el-button>
       </el-form-item>
+      <router-link :to="{path:'/login'}">
+        <el-form-item>
+        <el-link type="warning" :underline="false">已有账号，去登录</el-link>
+      </el-form-item>
+      </router-link>
     </el-form>
   </div>
 </template>
